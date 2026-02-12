@@ -4,6 +4,8 @@
 
 Neural_Core is an interactive playground that bridges the gap between high-level architectural design and low-level PyTorch implementation. It allows you to build neural networks visually, watch them train in real-time, and inspect individual neurons to understand how weights, biases, and gradients evolve during the learning process.
 
+![Neural_Core Interface](screenshot.png)
+
 [![Neural Network Playground Demo](https://img.youtube.com/vi/_JZBxz40_H8/0.jpg)](https://youtu._JZBxz40_H8)
 *Watch the Demo: [https://youtu.be/_JZBxz40_H8](https://youtu.be/_JZBxz40_H8)*
 
