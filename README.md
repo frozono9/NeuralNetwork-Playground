@@ -154,24 +154,10 @@ Open your browser to `http://localhost:5173`
 
 ## Usage
 
-### Building a Model
-
-1. **Visual Approach**:
-   - Drag layer nodes from the palette
-   - Connect them to define architecture
-   - Watch PyTorch code generate automatically
-
-2. **Code Approach**:
-   - Write PyTorch code in the Monaco editor
-   - Watch the visual graph update automatically
-
-### Training
-
-1. Click **"Compile"** to validate your model
-2. Configure hyperparameters (learning rate, batch size, epochs)
-3. Select dataset (MNIST, CIFAR-10)
-4. Click **"Train"** to start training
-5. Watch live visualizations:
+1. Configure hyperparameters (learning rate, batch size, epochs)
+2. Select dataset (MNIST, CIFAR-10)
+3. Click **"Train"** to start training
+4. Watch live visualizations:
    - Gradient flow through edges
    - Loss/accuracy charts
    - Real-time metrics
@@ -182,8 +168,6 @@ Open your browser to `http://localhost:5173`
    - Activation distributions
    - Gradient statistics
    - Weight norms
-2. Pause training to examine specific batches
-3. Use step-by-step execution for detailed analysis
 
 ---
 
