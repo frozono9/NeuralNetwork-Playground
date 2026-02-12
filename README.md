@@ -2,7 +2,7 @@
 
 **A visual development environment for real-time neural network design, training, and tensor inspection.**
 
-Neural_Core is an interactive playground that bridges the gap between high-level architectural design and low-level PyTorch implementation. It allows you to build neural networks visually, watch them train in real-time, and inspect individual neurons to understand how weights, biases, and gradients evolve during the learning process.
+Neural_Core is an interactive playground to help bridge high-level architectural design and low-level PyTorch implementation. It allows you to build neural networks visually, watch them train in real-time, and inspect individual neurons to understand how weights, biases, and gradients evolve during the learning process.
 
 ![Neural_Core Interface](screenshot.png)
 
@@ -11,7 +11,7 @@ Neural_Core is an interactive playground that bridges the gap between high-level
 
 ---
 
-## 🔬 What it does
+## What it does
 
 ### 1. Visual Architecture Design
 - **Interactive Graph**: Build networks by selecting datasets (MNIST/CIFAR-10) and defining hidden layer depths (up to 10 layers).
@@ -30,7 +30,7 @@ Neural_Core is an interactive playground that bridges the gap between high-level
 
 ---
 
-## 🛠 Features
+## Features
 
 ### Architecture & Code
 - **Graph → Code**: Visual configuration generates production-ready PyTorch code.
@@ -42,7 +42,7 @@ Neural_Core is an interactive playground that bridges the gap between high-level
 
 ---
 
-## 🚀 Future Steps
+## Future Steps
 
 - [ ] **CNN Support**: Adding Convolutional (Conv2d) and Pooling layers to the visual builder.
 - [ ] **Custom Dataset Upload**: Allow users to drag-and-drop their own CSV/Image datasets for training.
@@ -52,7 +52,7 @@ Neural_Core is an interactive playground that bridges the gap between high-level
 
 ---
 
-## ⚙️ Setup & Installation
+## Setup & Installation
 
 ### Backend (Python)
 1. Navigate to `backend/`
@@ -66,7 +66,7 @@ Neural_Core is an interactive playground that bridges the gap between high-level
 
 ---
 
-## 🏗 Technology Stack
+## Technology Stack
 
 - **Frontend**: React, React Flow (Visualization), Socket.IO-client, Vite
 - **Backend**: Python 3.14, FastAPI (Web Server), PyTorch (Deep Learning), Socket.IO (Real-time Stream)
