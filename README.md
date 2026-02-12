@@ -10,22 +10,22 @@ Build neural networks visually → auto-generate PyTorch code → edit code → 
 
 ## Features
 
-### 🔥 Bidirectional Synchronization
+### Bidirectional Synchronization
 - **Graph → Code**: Drag layers in visual editor → PyTorch code generates automatically
 - **Code → Graph**: Edit Python code → visual graph updates in real-time
 - AST-based parsing for accurate code-to-graph reconstruction
 
-### 🎨 Visual Model Builder
+### Visual Model Builder
 - Drag-and-drop layer nodes (Linear, Conv2d, BatchNorm, ReLU, Dropout, etc.)
 - Connect layers visually to define model architecture
 - Real-time shape inference and validation
 
-### 💻 Monaco Code Editor
+### Monaco Code Editor
 - VSCode-like Python editing experience
 - Syntax highlighting and autocomplete
 - Real-time synchronization with graph
 
-### 🔬 Neural Network Debugger
+### Neural Network Debugger
 - **Live Training Visualization**:
   - Edge thickness = gradient magnitude
   - Edge color = gradient sign/direction
@@ -37,7 +37,7 @@ Build neural networks visually → auto-generate PyTorch code → edit code → 
   - Feature maps (CNNs)
   - Dead neuron detection
 
-### ⚙️ Model Analysis
+### Model Analysis
 - Parameter count
 - FLOPs calculation
 - Memory estimation

@@ -126,20 +126,26 @@ function IndividualNeuronNode({ data, selected }) {
     
     return (
         <div
+            onClick={(e) => {
+                console.log('IndividualNeuronNode clicked (DOM event)', data.neuronIndex);
+                // Optionally stop propagation if we want to bypass ReactFlow's handler, 
+                // but usually better to let ReactFlow handle it if possible.
+            }}
             style={{
             width: `${size}px`,
             height: `${size}px`,
-            background: activationValue > 0.05 ? baseColor : '#fff',
-            border: selected ? `3px solid #000` : `2px solid #000`,
+            background: selected ? '#00ff41' : (activationValue > 0.05 ? baseColor : '#fff'),
+            border: selected ? `4px solid #ff0055` : `2px solid #000`,
             borderRadius: isInputNode ? '4px' : '0',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             transition: 'all 0.1s ease-out',
-            boxShadow: activationValue > 0.5 ? `0 0 15px ${baseColor}` : 'none',
-            transform: `scale(${1 + activationValue * 0.15})`,
+            boxShadow: selected ? '0 0 20px #ff0055' : (activationValue > 0.5 ? `0 0 15px ${baseColor}` : 'none'),
+            transform: selected ? 'scale(1.3)' : `scale(${1 + activationValue * 0.15})`,
             position: 'relative',
-            cursor: 'crosshair'
+            cursor: 'pointer',
+            zIndex: selected ? 1000 : 1
         }}
             title={`${data.layerName} - Index ${data.neuronIndex}\nActivation: ${activationValue.toFixed(4)}`}
         >
@@ -774,11 +780,15 @@ function NetworkBuilder({ onConfigChange, onGenerateCode, onApplyModel }) {
 // NEURON-LEVEL GRAPH VISUALIZATION
 // ============================================================================
 
-function NeuronLevelGraph({ config, selectedNode, onNodeClick, neuronActivations, animatingLayer }) {
+function NeuronLevelGraph({ config, selectedNode, onNodeClick, neuronActivations, animatingLayer, isTraining }) {
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
     useEffect(() => {
+        // Deep compare or check for significant change to avoid resets.
+        if (isTraining) return;
+
+        console.log('NeuronLevelGraph main structure useEffect triggered, config:', !!config);
         if (!config) {
             setNodes([]);
             setEdges([]);
@@ -874,7 +884,7 @@ function NeuronLevelGraph({ config, selectedNode, onNodeClick, neuronActivations
 
         setNodes(newNodes);
         setEdges(newEdges);
-    }, [config, onNodeClick]);
+    }, [config, onNodeClick, isTraining]);
 
     // Update activations + selection without rebuilding the full graph.
     useEffect(() => {
@@ -899,10 +909,6 @@ function NeuronLevelGraph({ config, selectedNode, onNodeClick, neuronActivations
         // animatingLayer no longer drives per-edge animation to keep perf stable.
     }, [neuronActivations, selectedNode?.id, animatingLayer, setNodes]);
 
-    const nodeTypes = {
-        neuron: IndividualNeuronNode
-    };
-
     return (
         <div style={{ width: '100%', height: '100%', background: '#fff' }}>
             <ReactFlow
@@ -910,8 +916,11 @@ function NeuronLevelGraph({ config, selectedNode, onNodeClick, neuronActivations
                 edges={edges}
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
+                onPaneClick={(event) => {
+                    console.log('ReactFlow PANE clicked (background)');
+                }}
                 onNodeClick={(event, node) => {
-                    console.log('ReactFlow onNodeClick:', node.type, node.id, node.data);
+                    console.log('ReactFlow onNodeClick FIRED');
                     if (node.type === 'neuron') {
                         onNodeClick(node);
                     }
@@ -920,6 +929,11 @@ function NeuronLevelGraph({ config, selectedNode, onNodeClick, neuronActivations
                 nodesDraggable={false}
                 nodesConnectable={false}
                 elementsSelectable={true}
+                selectNodesOnDrag={false}
+                panOnDrag={[1, 2]}
+                panOnScroll={true}
+                zoomOnScroll={true}
+                zoomOnDoubleClick={false}
                 fitView
                 minZoom={0.01}
                 maxZoom={2}
@@ -1137,7 +1151,9 @@ function TrainingSamplePreview({ sample }) {
 // NEURON INSPECTOR PANEL
 // ============================================================================
 
-function NeuronInspector({ node }) {
+function NeuronInspector({ node, isCompiled }) {
+    console.log('NeuronInspector render - node:', node?.id, 'data:', node?.data);
+    
     if (!node || node.type !== 'neuron') {
         return (
             <div style={{
@@ -1145,7 +1161,9 @@ function NeuronInspector({ node }) {
                 color: '#999',
                 fontSize: '11px',
                 textAlign: 'center',
-                fontFamily: 'monospace'
+                fontFamily: 'monospace',
+                background: '#f8f8f8',
+                border: '2px solid #e0e0e0'
             }}>
                 Click a neuron to inspect
             </div>
@@ -1248,7 +1266,9 @@ function NeuronInspector({ node }) {
             {!data.inspection && data.layerType !== 'input' && (
                 <div style={{ marginTop: '18px', borderTop: '1px solid #eee', paddingTop: '14px' }}>
                     <div style={{ color: '#999', fontSize: '10px', fontStyle: 'italic' }}>
-                        Fetching neuron parameters...
+                        {isCompiled 
+                            ? 'Fetching neuron parameters...' 
+                            : 'Compile the model to view weights and biases'}
                     </div>
                 </div>
             )}
@@ -1351,6 +1371,16 @@ function App() {
         };
         return JSON.stringify(compileSigObj);
     }, []);
+
+    // Debug: Track selectedNode changes
+    useEffect(() => {
+        console.log('🔴 selectedNode STATE CHANGED:', selectedNode?.id, selectedNode);
+    }, [selectedNode]);
+
+    // Debug: Track neuronInspection changes
+    useEffect(() => {
+        console.log('🔵 neuronInspection STATE CHANGED:', neuronInspection);
+    }, [neuronInspection]);
 
     const mapBackendActivationsToVisual = useCallback((backendActivations, inputPixels) => {
         if (!backendActivations || typeof backendActivations !== 'object') return {};
@@ -1518,7 +1548,9 @@ function App() {
         return () => ws.disconnect();
     }, []);
 
-    const handleConfigChange = (newConfig) => {
+    const handleConfigChange = useCallback((newConfig) => {
+        if (isTraining) return; // Prevent config updates while training
+
         setConfig(newConfig);
         if (newConfig.learningRate !== undefined) setLearningRate(newConfig.learningRate);
         if (newConfig.epochs !== undefined) setEpochs(newConfig.epochs);
@@ -1535,7 +1567,7 @@ function App() {
         if (compiledSigRef.current && nextSig && nextSig !== compiledSigRef.current) {
             setIsCompiled(false);
         }
-    };
+    }, [isTraining, computeCompileSig]);
 
     // Auto-compile (debounced) when architecture/dataset changes.
     useEffect(() => {
@@ -1568,6 +1600,7 @@ function App() {
     }, [config?.dataset, config?.inputSize, config?.outputSize, config?.hiddenLayers, isTraining, computeCompileSig, isCompiled]);
 
     const handleTrain = () => {
+        console.log('handleTrain called. Current state:', { isCompiled, isCompilePending, socket: !!socketRef.current });
         if (!socketRef.current || !socketRef.current.connected) {
             alert('Not connected to backend');
             return;
@@ -1595,22 +1628,32 @@ function App() {
     };
 
     const handleNodeClick = (node) => {
-        console.log('Node clicked:', node?.data?.layerIndex, node?.data?.neuronIndex);
+        console.log('====================================');
+        console.log('handleNodeClick CALLED!!!');
+        console.log('Node:', node);
+        console.log('Node data:', node?.data);
+        console.log('Layer index:', node?.data?.layerIndex, 'Neuron index:', node?.data?.neuronIndex);
+        console.log('====================================');
+        
         setSelectedNode(node);
+        console.log('setSelectedNode called with:', node);
 
         // Map visual layer index (0=input) to backend linear layer index (0=first linear)
         // Only hidden/output neurons correspond to linear outputs.
         const layerIndex = (node?.data?.layerIndex ?? 0) - 1;
         const neuronIndex = node?.data?.neuronIndex ?? 0;
 
+        console.log('Computed backend indices - layer:', layerIndex, 'neuron:', neuronIndex);
+        console.log('Socket connected?', socketRef.current?.connected);
+
         if (layerIndex >= 0 && socketRef.current && socketRef.current.connected) {
-            console.log('Inspecting neuron:', layerIndex, neuronIndex);
+            console.log('✅ Sending inspect_neuron to backend:', { layerIndex, neuronIndex });
             socketRef.current.emit('inspect_neuron', {
                 layerIndex,
                 neuronIndex
             });
         } else {
-            console.log('Input layer neuron or not connected');
+            console.log('❌ NOT sending to backend - layerIndex:', layerIndex, 'socket:', socketRef.current?.connected);
             setNeuronInspection(null);
         }
     };
@@ -1760,8 +1803,9 @@ function App() {
                             config={config}
                             selectedNode={selectedNode}
                             onNodeClick={handleNodeClick}
-                            neuronActivations={isTraining ? trainingSignals : neuronActivations}
+                            neuronActivations={isTraining ? (trainingSignals || {}) : (neuronActivations || {})}
                             animatingLayer={animatingLayer}
+                            isTraining={isTraining}
                         />
                     </div>
                 </div>
@@ -1805,6 +1849,7 @@ function App() {
                                     })()
                                 }
                             } : null}
+                            isCompiled={isCompiled}
                         />
                     </div>
                 </div>
