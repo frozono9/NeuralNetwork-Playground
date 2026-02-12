@@ -197,7 +197,7 @@ function getDatasetSpec(dataset) {
 // DRAWING CANVAS COMPONENT
 // ============================================================================
 
-function DrawingCanvas({ onPredict, isEnabled, dataset }) {
+function DrawingCanvas({ onPredict, onClear, isEnabled, dataset }) {
     const canvasRef = useRef(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const isDrawingRef = useRef(false);
@@ -493,6 +493,7 @@ function DrawingCanvas({ onPredict, isEnabled, dataset }) {
         setIsDrawing(false);
         lastCellRef.current = null;
         renderCanvas();
+        if (onClear) onClear();
     };
 
     const handlePredict = async () => {
@@ -1366,6 +1367,7 @@ function App() {
     const [status, setStatus] = useState('Connecting...');
     const [isCompiled, setIsCompiled] = useState(false);
     const [isTraining, setIsTraining] = useState(false);
+    const [isModelTrained, setIsModelTrained] = useState(false);
     const [metrics, setMetrics] = useState({
         loss: null,
         accuracy: null,
@@ -1479,11 +1481,13 @@ function App() {
             compiledSigRef.current = lastRequestedSigRef.current;
             setIsCompilePending(false);
             setIsCompiled(true);
+            setIsModelTrained(false); // Reset training flag for new model
             console.log('✓ Model compiled successfully:', data.model_info);
         });
 
         ws.on('training_started', () => {
             setIsTraining(true);
+            setIsModelTrained(true);
         });
 
         ws.on('training_stopped', () => {
@@ -1837,7 +1841,8 @@ function App() {
                 }}>
                     <DrawingCanvas
                         onPredict={handlePredict}
-                        isEnabled={computeCompileSig(config) === compiledSigRef.current && !isTraining && !isCompilePending}
+                        onClear={() => setPrediction(null)}
+                        isEnabled={computeCompileSig(config) === compiledSigRef.current && !isTraining && !isCompilePending && isModelTrained}
                         dataset={config?.dataset || 'mnist'}
                     />
 
