@@ -1,23 +1,74 @@
-# Visual Deep Learning IDE
+# Neural_Core IDE [v1.0.4]
 
-**A professional development environment where visual graph and PyTorch code are bidirectionally synchronized.**
+**A visual development environment for real-time neural network design, training, and tensor inspection.**
 
-Build neural networks visually → auto-generate PyTorch code → edit code → graph updates → train with full internal visualization → debug tensors interactively.
+Neural_Core is an interactive playground that bridges the gap between high-level architectural design and low-level PyTorch implementation. It allows you to build neural networks visually, watch them train in real-time, and inspect individual neurons to understand how weights, biases, and gradients evolve during the learning process.
 
-**Think: VSCode × React Flow × PyTorch Debugger**
+[![Neural Network Playground Demo](https://img.youtube.com/vi/_JZBxz40_H8/0.jpg)](https://youtu._JZBxz40_H8)
+*Watch the Demo: [https://youtu.be/_JZBxz40_H8](https://youtu.be/_JZBxz40_H8)*
 
 ---
 
-## Features
+## 🔬 What it does
 
-### Bidirectional Synchronization
-- **Graph → Code**: Drag layers in visual editor → PyTorch code generates automatically
-- **Code → Graph**: Edit Python code → visual graph updates in real-time
-- AST-based parsing for accurate code-to-graph reconstruction
+### 1. Visual Architecture Design
+- **Interactive Graph**: Build networks by selecting datasets (MNIST/CIFAR-10) and defining hidden layer depths (up to 10 layers).
+- **Auto-Reframing**: The viewport automatically adjusts as you scale your architecture to keep the entire network in focus.
+- **Bidirectional Sync**: Visual changes instantly update the generated PyTorch code preview.
 
-### Visual Model Builder
-- Drag-and-drop layer nodes (Linear, Conv2d, BatchNorm, ReLU, Dropout, etc.)
-- Connect layers visually to define model architecture
+### 2. Real-Time Training Visualization
+- **Activation Mesh**: Watch neurons light up in real-time as the model processes training samples.
+- **Dynamic Telemetry**: Visual feedback on bias magnitudes and activation values directly on the nodes.
+- **Metrics Tracking**: Live tracking of Loss and Accuracy across epochs.
+
+### 3. Deep Tensor Inspection
+- **Neuron-Level Debugging**: Click any neuron to open the **Inspector Panel**.
+- **Live Parameter Stream**: View real-time weights, biases, and gradient distributions for the specific neuron you are inspecting.
+- **Interference Testing**: Draw on the integrated canvas to test model predictions instantly and observe the internal firing patterns.
+
+---
+
+## 🛠 Features
+
+### Architecture & Code
+- **Graph → Code**: Visual configuration generates production-ready PyTorch code.
+- **Industrial Styling**: A clean, high-contrast monospace UI designed for technical clarity.
+
+### Training & Inference
+- **Socket.IO Backend**: Low-latency communication with a FastAPI/PyTorch backend.
+- **Drawing Canvas**: Real-time digit/image classification testing.
+
+---
+
+## 🚀 Future Steps
+
+- [ ] **CNN Support**: Adding Convolutional (Conv2d) and Pooling layers to the visual builder.
+- [ ] **Custom Dataset Upload**: Allow users to drag-and-drop their own CSV/Image datasets for training.
+- [ ] **Weight Export**: Download trained state-dicts directly from the IDE.
+- [ ] **Cloud Training**: Integration with cloud GPUs for more intensive training sessions.
+- [ ] **Expanded Ops**: Support for LayerNorm, Residual connections, and Attention heads.
+
+---
+
+## ⚙️ Setup & Installation
+
+### Backend (Python)
+1. Navigate to `backend/`
+2. Create environment: `python -m venv venv`
+3. Install dependencies: `pip install -r requirements.txt`
+4. Run server: `python main.py`
+
+### Frontend (React)
+1. Install dependencies: `npm install`
+2. Launch dev server: `npm run dev`
+
+---
+
+## 🏗 Technology Stack
+
+- **Frontend**: React, React Flow (Visualization), Socket.IO-client, Vite
+- **Backend**: Python 3.14, FastAPI (Web Server), PyTorch (Deep Learning), Socket.IO (Real-time Stream)
+
 - Real-time shape inference and validation
 
 ### Monaco Code Editor

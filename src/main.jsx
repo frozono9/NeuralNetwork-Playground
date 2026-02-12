@@ -9,7 +9,9 @@ import ReactFlow, {
     useEdgesState,
     Panel,
     Handle,
-    Position
+    Position,
+    ReactFlowProvider,
+    useReactFlow
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './styles/index.css';
@@ -687,12 +689,12 @@ function NetworkBuilder({ onConfigChange, onGenerateCode, onApplyModel }) {
                 <input
                     type="number"
                     min="1"
-                    max="5"
+                    max="10"
                     value={numHiddenLayers}
                     onChange={(e) => {
                         const next = parseInt(e.target.value, 10);
                         if (Number.isNaN(next)) return;
-                        setNumHiddenLayers(Math.max(1, Math.min(5, next)));
+                        setNumHiddenLayers(Math.max(1, Math.min(10, next)));
                     }}
                     style={inputStyle}
                 />
@@ -779,6 +781,18 @@ function NetworkBuilder({ onConfigChange, onGenerateCode, onApplyModel }) {
 // ============================================================================
 // NEURON-LEVEL GRAPH VISUALIZATION
 // ============================================================================
+
+function AutoFit({ nodes }) {
+    const { fitView } = useReactFlow();
+    useEffect(() => {
+        // Debounce or slightly delay fitView to allow ReactFlow to finish layout calculation
+        const timer = setTimeout(() => {
+            fitView({ duration: 400, padding: 0.1 });
+        }, 50);
+        return () => clearTimeout(timer);
+    }, [nodes.length, fitView]);
+    return null;
+}
 
 function NeuronLevelGraph({ config, selectedNode, onNodeClick, neuronActivations, animatingLayer, isTraining }) {
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -884,7 +898,7 @@ function NeuronLevelGraph({ config, selectedNode, onNodeClick, neuronActivations
 
         setNodes(newNodes);
         setEdges(newEdges);
-    }, [config, onNodeClick, isTraining]);
+    }, [config, isTraining]); // Removed onNodeClick from here to prevent structure reset on handler change
 
     // Update activations + selection without rebuilding the full graph.
     useEffect(() => {
@@ -911,47 +925,50 @@ function NeuronLevelGraph({ config, selectedNode, onNodeClick, neuronActivations
 
     return (
         <div style={{ width: '100%', height: '100%', background: '#fff' }}>
-            <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onPaneClick={(event) => {
-                    console.log('ReactFlow PANE clicked (background)');
-                }}
-                onNodeClick={(event, node) => {
-                    console.log('ReactFlow onNodeClick FIRED');
-                    if (node.type === 'neuron') {
-                        onNodeClick(node);
-                    }
-                }}
-                nodeTypes={nodeTypes}
-                nodesDraggable={false}
-                nodesConnectable={false}
-                elementsSelectable={true}
-                selectNodesOnDrag={false}
-                panOnDrag={[1, 2]}
-                panOnScroll={true}
-                zoomOnScroll={true}
-                zoomOnDoubleClick={false}
-                fitView
-                minZoom={0.01}
-                maxZoom={2}
-                defaultViewport={{ x: 0, y: 0, zoom: 0.6 }}
-            >
-                <Background color="#f0f0f0" gap={30} />
-                <Controls showInteractive={false} style={{ boxShadow: 'none', border: '1px solid #000' }} />
-                <Panel position="top-right" style={{
-                    background: '#fff',
-                    padding: '8px 12px',
-                    border: '2px solid #000',
-                    fontSize: '11px',
-                    fontWeight: 'bold',
-                    fontFamily: 'monospace'
-                }}>
-                    CORE_OS // V_NODES: {nodes.filter(n => n.type === 'neuron').length}
-                </Panel>
-            </ReactFlow>
+            <ReactFlowProvider>
+                <ReactFlow
+                    nodes={nodes}
+                    edges={edges}
+                    onNodesChange={onNodesChange}
+                    onEdgesChange={onEdgesChange}
+                    onPaneClick={(event) => {
+                        console.log('ReactFlow PANE clicked (background)');
+                    }}
+                    onNodeClick={(event, node) => {
+                        console.log('ReactFlow onNodeClick FIRED');
+                        if (node.type === 'neuron') {
+                            onNodeClick(node);
+                        }
+                    }}
+                    nodeTypes={nodeTypes}
+                    nodesDraggable={false}
+                    nodesConnectable={false}
+                    elementsSelectable={true}
+                    selectNodesOnDrag={false}
+                    panOnDrag={[1, 2]}
+                    panOnScroll={true}
+                    zoomOnScroll={true}
+                    zoomOnDoubleClick={false}
+                    fitView
+                    minZoom={0.01}
+                    maxZoom={2}
+                    defaultViewport={{ x: 0, y: 0, zoom: 0.6 }}
+                >
+                    <Background color="#f0f0f0" gap={30} />
+                    <Controls showInteractive={false} style={{ boxShadow: 'none', border: '1px solid #000' }} />
+                    <Panel position="top-right" style={{
+                        background: '#fff',
+                        padding: '8px 12px',
+                        border: '2px solid #000',
+                        fontSize: '11px',
+                        fontWeight: 'bold',
+                        fontFamily: 'monospace'
+                    }}>
+                        CORE_OS // V_NODES: {nodes.filter(n => n.type === 'neuron').length}
+                    </Panel>
+                    <AutoFit nodes={nodes} />
+                </ReactFlow>
+            </ReactFlowProvider>
         </div>
     );
 }
@@ -1322,7 +1339,19 @@ function NeuronInspector({ node, isCompiled }) {
 // ============================================================================
 
 function App() {
-    const [config, setConfig] = useState(null);
+    const [config, setConfig] = useState(() => ({
+        dataset: 'mnist',
+        inputSize: 784,
+        hiddenLayers: [
+            { size: 16, activation: 'ReLU', dropout: 0 },
+            { size: 16, activation: 'ReLU', dropout: 0 }
+        ],
+        outputSize: 10,
+        lossFunction: 'CrossEntropyLoss',
+        optimizer: 'Adam',
+        learningRate: 0.001,
+        epochs: 10
+    }));
     const [code, setCode] = useState('');
     const [selectedNode, setSelectedNode] = useState(null);
     const [neuronInspection, setNeuronInspection] = useState(null);
@@ -1627,36 +1656,23 @@ function App() {
         }
     };
 
-    const handleNodeClick = (node) => {
-        console.log('====================================');
+    const handleNodeClick = useCallback((node) => {
         console.log('handleNodeClick CALLED!!!');
-        console.log('Node:', node);
-        console.log('Node data:', node?.data);
-        console.log('Layer index:', node?.data?.layerIndex, 'Neuron index:', node?.data?.neuronIndex);
-        console.log('====================================');
-        
         setSelectedNode(node);
-        console.log('setSelectedNode called with:', node);
 
         // Map visual layer index (0=input) to backend linear layer index (0=first linear)
-        // Only hidden/output neurons correspond to linear outputs.
         const layerIndex = (node?.data?.layerIndex ?? 0) - 1;
         const neuronIndex = node?.data?.neuronIndex ?? 0;
 
-        console.log('Computed backend indices - layer:', layerIndex, 'neuron:', neuronIndex);
-        console.log('Socket connected?', socketRef.current?.connected);
-
         if (layerIndex >= 0 && socketRef.current && socketRef.current.connected) {
-            console.log('✅ Sending inspect_neuron to backend:', { layerIndex, neuronIndex });
             socketRef.current.emit('inspect_neuron', {
                 layerIndex,
                 neuronIndex
             });
         } else {
-            console.log('❌ NOT sending to backend - layerIndex:', layerIndex, 'socket:', socketRef.current?.connected);
             setNeuronInspection(null);
         }
-    };
+    }, [socket]); // socket state is enough to know if we can emit
 
     const handlePredict = async (result, inputPixels) => {
         if (!result) return;
