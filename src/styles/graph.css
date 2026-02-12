@@ -1,0 +1,314 @@
+/* React Flow Customization */
+.react-flow {
+    background: var(--color-bg-secondary);
+}
+
+.react-flow__node {
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
+    transition: all var(--transition-base);
+}
+
+.react-flow__node:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.react-flow__node.selected {
+    box-shadow: 0 0 0 2px var(--color-accent-primary);
+}
+
+/* Custom Node Styles */
+.layer-node {
+    min-width: 180px;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.layer-node::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--color-accent-gradient);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+}
+
+.layer-node:hover::before,
+.layer-node.training::before {
+    opacity: 1;
+}
+
+.layer-node.training {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.layer-node-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-sm);
+}
+
+.layer-node-title {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-md);
+}
+
+.layer-node-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+}
+
+.layer-node-params {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.layer-node-stats {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--color-border);
+}
+
+.layer-node-stat {
+    flex: 1;
+    text-align: center;
+}
+
+.layer-node-stat-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    display: block;
+    margin-bottom: 2px;
+}
+
+.layer-node-stat-value {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+}
+
+/* Node Type Colors */
+.layer-node.type-linear {
+    border-left: 3px solid #3b82f6;
+}
+
+.layer-node.type-conv {
+    border-left: 3px solid #8b5cf6;
+}
+
+.layer-node.type-activation {
+    border-left: 3px solid #10b981;
+}
+
+.layer-node.type-normalization {
+    border-left: 3px solid #f59e0b;
+}
+
+.layer-node.type-pooling {
+    border-left: 3px solid #06b6d4;
+}
+
+.layer-node.type-dropout {
+    border-left: 3px solid #ef4444;
+}
+
+.layer-node.type-attention {
+    border-left: 3px solid #ec4899;
+}
+
+.layer-node.type-input {
+    border-left: 3px solid #6366f1;
+}
+
+.layer-node.type-output {
+    border-left: 3px solid #8b5cf6;
+}
+
+/* Custom Edge Styles */
+.react-flow__edge-path {
+    stroke-width: 2;
+    transition: all var(--transition-base);
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+    stroke-width: 3;
+}
+
+.react-flow__edge.animated .react-flow__edge-path {
+    stroke-dasharray: 5;
+    animation: dashdraw 0.5s linear infinite;
+}
+
+@keyframes dashdraw {
+    from {
+        stroke-dashoffset: 10;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Gradient Edge (for gradient flow visualization) */
+.gradient-edge {
+    position: relative;
+}
+
+.gradient-edge-path {
+    stroke: url(#gradient-positive);
+    filter: drop-shadow(0 0 4px rgba(16, 185, 129, 0.5));
+}
+
+.gradient-edge-path.negative {
+    stroke: url(#gradient-negative);
+    filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.5));
+}
+
+.gradient-edge-path.training {
+    animation: pulse-edge 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-edge {
+
+    0%,
+    100% {
+        opacity: 1;
+        stroke-width: 2;
+    }
+
+    50% {
+        opacity: 0.7;
+        stroke-width: 4;
+    }
+}
+
+/* Layer Palette */
+.layer-palette {
+    position: absolute;
+    left: var(--spacing-md);
+    top: 80px;
+    width: 240px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-lg);
+    z-index: var(--z-sticky);
+}
+
+.layer-palette-title {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing-md);
+}
+
+.layer-palette-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.layer-palette-section:last-child {
+    margin-bottom: 0;
+}
+
+.layer-palette-section-title {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing-sm);
+}
+
+.layer-palette-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    cursor: grab;
+    transition: all var(--transition-base);
+    margin-bottom: var(--spacing-xs);
+}
+
+.layer-palette-item:hover {
+    background: var(--color-surface-hover);
+}
+
+.layer-palette-item:active {
+    cursor: grabbing;
+}
+
+.layer-palette-item-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
+}
+
+.layer-palette-item-name {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+}
+
+/* Selection Highlight */
+.react-flow__node.selected .layer-node {
+    box-shadow: 0 0 0 2px var(--color-accent-primary);
+}
+
+/* Minimap Customization */
+.react-flow__minimap {
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.react-flow__minimap-mask {
+    fill: var(--color-accent-primary);
+    fill-opacity: 0.2;
+}
+
+.react-flow__minimap-node {
+    fill: var(--color-surface);
+    stroke: var(--color-border);
+}
+
+/* Controls Customization */
+.react-flow__controls {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+}
+
+.react-flow__controls-button {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    transition: all var(--transition-base);
+}
+
+.react-flow__controls-button:hover {
+    background: var(--color-surface-hover);
+}
+
+.react-flow__controls-button:last-child {
+    border-bottom: none;
+}

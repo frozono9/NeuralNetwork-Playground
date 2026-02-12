@@ -1,0 +1,36 @@
+.status-bar {
+    height: 28px;
+    background: var(--color-bg-elevated);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-md);
+    gap: var(--spacing-lg);
+    font-size: var(--font-size-xs);
+}
+
+.status-section {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.status-text {
+    color: var(--color-text-secondary);
+}
+
+.connection-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-error);
+}
+
+.connection-indicator.connected {
+    background: var(--color-success);
+    box-shadow: 0 0 8px var(--color-success);
+}
+
+.connection-indicator.disconnected {
+    background: var(--color-error);
+}

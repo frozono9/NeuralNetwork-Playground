@@ -1,0 +1,11 @@
+node_modules
+backend/data/cifar-10-python.tar.gz
+backend/data/cifar-10-batches-py/
+backend/data/cifar-10-batches-py.tar.gz
+data/cifar-10-python.tar.gz
+data/cifar-10-batches-py/
+data/cifar-10-batches-py.tar.gz
+backend/venv/
+__pycache__/
+.DS_Store
+dist/

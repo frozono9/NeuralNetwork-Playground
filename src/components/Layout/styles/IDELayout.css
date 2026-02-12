@@ -1,0 +1,84 @@
+.ide-layout {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg-primary);
+}
+
+.ide-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+.ide-pane {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg-secondary);
+    border-right: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+.ide-pane:last-child {
+    border-right: none;
+}
+
+.pane-header {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg-tertiary);
+}
+
+.pane-header h3 {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+}
+
+.pane-content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.pane-tabs {
+    display: flex;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-bg-tertiary);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.pane-tabs button {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    transition: all var(--transition-base);
+}
+
+.pane-tabs button:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-text-primary);
+}
+
+.pane-tabs button.active {
+    background: var(--color-accent-primary);
+    color: white;
+}
+
+.pane-resizer {
+    width: 4px;
+    background: var(--color-border);
+    cursor: col-resize;
+    transition: background var(--transition-fast);
+}
+
+.pane-resizer:hover {
+    background: var(--color-accent-primary);
+}
