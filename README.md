@@ -7,7 +7,7 @@ Neural_Core is an interactive playground to help bridge high-level architectural
 ![Neural_Core Interface](screenshot.png)
 
 [![Neural Network Playground Demo](https://img.youtube.com/vi/_JZBxz40_H8/0.jpg)](https://youtu._JZBxz40_H8)
-*Watch the Demo: [Demo](https://youtu.be/_JZBxz40_H8)*
+*Watch the [Demo](https://youtu.be/_JZBxz40_H8)*
 
 ---
 
